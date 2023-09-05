@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.q-field__bottom{
+    padding: 5px 12px 0px !important;
+}
+@layer base {
+    body{
+      @apply !bg-gray-100
+    }
+}
