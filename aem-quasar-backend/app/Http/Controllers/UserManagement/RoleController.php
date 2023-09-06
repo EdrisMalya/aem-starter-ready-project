@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\UserManagement;
 
+use App\Events\UserUpdatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserManagement\RoleRequest;
 use App\Http\Resources\UserManagement\PermissionGroupResource;
@@ -78,6 +79,7 @@ class RoleController extends Controller
         foreach ($user_ids as $id){
             Cache::forget('permission_keys_'.$id);
         }
+        event(new UserUpdatedEvent('Updated event'));
         return response()->json([
             'result' => true,
             'message' => 'Role updated successfully'

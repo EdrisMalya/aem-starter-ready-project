@@ -61,16 +61,6 @@ export default defineComponent({
     mounted() {
         this.generalStore.setActivePage('home')
         this.generalStore.setPageTitle('Home page')
-        this.$echo
-            .private('testChannel')
-            .listen('TestEvent', e => {
-                console.log(e)
-                /*this.$q.notify({
-                    message: e.message,
-                    color: 'green',
-                })*/
-            })
-            .subscribe()
     },
 })
 </script>

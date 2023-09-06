@@ -209,9 +209,10 @@ export default defineComponent({
                 }
             })
             .listen('UserUpdatedEvent', e => {
+                this.authStore.getLoggedInUse()
                 if (
-                    !e.result.is_active &&
-                    e.result.user_id === this.authStore.user.id
+                    !e.result?.is_active &&
+                    e.result?.user_id === this.authStore.user.id
                 ) {
                     this.logoutFunction(e.result.message)
                 }

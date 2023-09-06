@@ -40,7 +40,7 @@
                     :props="props"
                     :class="
                         updatedRow === props.row['id'] &&
-                        'bg-green-500 text-white'
+                        'bg-green-500 !text-white'
                     "
                 >
                     <q-td>
