@@ -40,6 +40,9 @@ export const appRoutes = {
         backup: {
             api: 'configurations/backup/run',
             index_api: 'configurations/backup',
+            backup_list_api: 'configurations/backup/list',
+            change_backup: 'configurations/backup/change',
+            delete_api: 'configurations/backup/delete',
         },
     },
 }

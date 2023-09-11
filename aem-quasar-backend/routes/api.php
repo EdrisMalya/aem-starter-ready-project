@@ -41,8 +41,13 @@ Route::middleware(['auth:sanctum'])->group(function(){
         Route::resource('languages', \App\Http\Controllers\Configurations\LanguagesController::class);
         Route::resource('language/words', \App\Http\Controllers\Configurations\LanguageWordController::class);
         Route::get('backup/run', [\App\Http\Controllers\Configurations\BackupController::class, 'run']);
+        Route::get('backup/list', [\App\Http\Controllers\Configurations\BackupController::class, 'list']);
+        Route::post('backup/change', [\App\Http\Controllers\Configurations\BackupController::class, 'change']);
+        Route::delete('backup/delete/{db}', [\App\Http\Controllers\Configurations\BackupController::class, 'delete']);
         Route::resource('backup', \App\Http\Controllers\Configurations\BackupController::class);
     });
+
+    Route::resource('notifications', \App\Http\Controllers\NotificationController::class);
 
 });
 Route::get('language/words', [\App\Http\Controllers\Configurations\LanguagesController::class, 'languageWords']);

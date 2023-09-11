@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Events\SystemConfigurationEvents;
 use App\Events\TestEvent;
 use App\Http\Controllers\Configurations\BackupController;
 use Illuminate\Console\Command;

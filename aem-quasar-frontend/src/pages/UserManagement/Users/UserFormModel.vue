@@ -1,6 +1,6 @@
 <template>
     <q-dialog :model-value="true" persistent>
-        <q-card class="min-w-[500px]">
+        <q-card class="md:min-w-[500px]">
             <q-card-section>
                 <p class="font-semibold text-lg">
                     {{ translate('User form') }}

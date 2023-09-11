@@ -15,6 +15,8 @@ export const useGeneralStore = defineStore('GeneralStore', {
             options: {},
         },
         update_id: 0,
+        event_message: null,
+        newUpdatePushed: false,
     }),
     actions: {
         setActivePage(value) {
@@ -48,6 +50,12 @@ export const useGeneralStore = defineStore('GeneralStore', {
         },
         setUpdateId(id) {
             this.update_id = id
+        },
+        setEventMessage(message) {
+            this.event_message = message
+        },
+        setNewUpdatedPushed(status) {
+            this.newUpdatePushed = status
         },
     },
 })

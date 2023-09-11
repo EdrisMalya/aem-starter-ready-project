@@ -37,7 +37,7 @@
                         icon-right="filter_alt"
                         @click="onSave"
                     >
-                        Filter
+                        {{ $translate('Filter') }}
                     </q-btn>
                     <q-btn
                         outline

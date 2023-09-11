@@ -1,8 +1,10 @@
 <template>
     <q-dialog :model-value="true" persistent>
-        <q-card class="min-w-[800px]">
+        <q-card class="md:min-w-[800px]">
             <q-card-section>
-                <h2 class="text-lg">Activity Log Details</h2>
+                <h2 class="text-lg">
+                    {{ $translate('Activity Log Details') }}
+                </h2>
             </q-card-section>
             <q-card-section>
                 <server-data
@@ -35,48 +37,51 @@
                         <br />
                     </div>
                     <div v-if="data.event === 'created'">
-                        <table class="w-full !text-center">
-                            <thead class="border-b bg-gray-100">
-                                <tr>
-                                    <th class="py-1">Field name</th>
-                                    <th class="py-1">Value</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                    v-for="(key, index) in Object.keys(
-                                        data.properties.attributes,
-                                    )"
-                                    :key="index"
-                                    class="border-b"
-                                >
-                                    <td>{{ key.replaceAll('_', ' ') }}</td>
-                                    <td>
-                                        <span
-                                            v-if="
-                                                key === 'created_at' ||
-                                                key === 'updated_at'
-                                            "
-                                        >
-                                            {{
-                                                dayjs(
+                        <div class="overflow-x-auto">
+                            <table class="w-full !text-center">
+                                <thead class="border-b bg-gray-100">
+                                    <tr>
+                                        <th class="py-1">Field name</th>
+                                        <th class="py-1">Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(key, index) in Object.keys(
+                                            data.properties.attributes,
+                                        )"
+                                        :key="index"
+                                        class="border-b"
+                                    >
+                                        <td>{{ key.replaceAll('_', ' ') }}</td>
+                                        <td>
+                                            <span
+                                                v-if="
+                                                    key === 'created_at' ||
+                                                    key === 'updated_at'
+                                                "
+                                            >
+                                                {{
+                                                    dayjs(
+                                                        data.properties
+                                                            .attributes[key],
+                                                    ).format(
+                                                        'YYYY-MM-DD hh:mm:ss A',
+                                                    )
+                                                }}
+                                            </span>
+                                            <span v-else>
+                                                {{
                                                     data.properties.attributes[
                                                         key
-                                                    ],
-                                                ).format(
-                                                    'YYYY-MM-DD hh:mm:ss A',
-                                                )
-                                            }}
-                                        </span>
-                                        <span v-else>
-                                            {{
-                                                data.properties.attributes[key]
-                                            }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                                    ]
+                                                }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div v-if="data.event === 'updated'">
                         <table class="border text-center w-full">

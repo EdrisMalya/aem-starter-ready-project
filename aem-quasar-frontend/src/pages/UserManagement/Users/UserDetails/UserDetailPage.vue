@@ -14,9 +14,9 @@
                 <q-breadcrumbs-el :label="translate('User details')" />
             </q-breadcrumbs>
         </div>
-        <div class="p-4">
+        <div>
             <user-management-layout active="users">
-                <div class="px-2 py-6">
+                <div class="md:px-2 py-4">
                     <div class="flex items-center justify-between">
                         <p class="text-lg font-semibold">
                             {{ translate('User details') }}

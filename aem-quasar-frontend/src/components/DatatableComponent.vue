@@ -1,5 +1,5 @@
 <template>
-    <div class="q-pa-md">
+    <div class="md:px-2 md:px-4 py-4">
         <q-table
             flat
             bordered
@@ -78,147 +78,196 @@
                     </q-td>
                 </q-tr>
             </template>
-            <template v-slot:top-left>
-                <div class="space-y-3 flex items-center">
-                    <q-input
-                        borderless
-                        dense
-                        outlined
-                        debounce="500"
-                        v-model="filter"
-                        :placeholder="languageStore.translate('Search')"
-                        clearable
+            <template v-slot:top>
+                <div
+                    class="w-full flex items-center justify-between flex-col md:flex-row"
+                >
+                    <div
+                        class="flex-1 md:flex-initial w-full md:w-fit flex items-center pb-1 md:pb-0"
                     >
-                        <template v-slot:append>
-                            <q-icon name="search" />
-                        </template>
-                    </q-input>
-                </div>
-            </template>
-
-            <template v-slot:top-right>
-                <div class="q-pa-md q-gutter-sm">
-                    <protected-component
-                        v-if="selectedRow.length > 0"
-                        :permission-key="deletePermissionKey"
-                    >
-                        <q-btn
-                            v-if="deleteAction"
-                            round
-                            color="red"
-                            :disable="loading"
-                            @click="onRecordDeleted"
-                            size="xs"
-                            outline
-                            icon="delete"
+                        <q-input
+                            borderless
+                            dense
+                            class="flex-1"
+                            outlined
+                            debounce="500"
+                            v-model="filter"
+                            :placeholder="languageStore.translate('Search')"
+                            clearable
                         >
-                            <q-tooltip>{{
-                                languageStore.translate('Delete record')
-                            }}</q-tooltip>
-                        </q-btn>
-                    </protected-component>
-                    <protected-component
-                        v-if="selectedRow.length > 0"
-                        :permission-key="editPermissionKey"
-                    >
+                            <template v-slot:append>
+                                <q-icon name="search" />
+                            </template>
+                        </q-input>
                         <q-btn
+                            flat
                             round
-                            color="warning"
-                            v-if="selectedRow.length === 1 && editAction"
-                            @click="onRecordEdited"
-                            size="xs"
-                            icon="edit"
+                            class="visible md:hidden"
+                            dense
+                            :icon="fullWidth ? 'fullscreen_exit' : 'fullscreen'"
+                            @click="fullWidth = !fullWidth"
+                        />
+                        <q-btn
+                            color="primary"
+                            icon="archive"
+                            class="mx-2"
                             outline
+                            size="xs"
+                            round
+                            @click="exportTable"
                         >
                             <q-tooltip>
-                                {{ languageStore.translate('Edit record') }}
+                                {{ languageStore.translate('Download') }}
+                                (CVS)
                             </q-tooltip>
                         </q-btn>
-                    </protected-component>
-                    <protected-component
-                        v-for="(action, index) in datatableActions"
-                        :key="index"
-                        :for-all="action?.forAll || false"
-                        :permission-key="action?.permission_key"
+                    </div>
+                    <div
+                        class="flex items-center w-full md:w-fit flex-row-reverse justify-end"
                     >
-                        <q-btn
-                            v-if="
-                                action?.show_on_select
-                                    ? selectedRow.length > 0
-                                    : true
-                            "
-                            :color="action.color ?? 'primary'"
-                            :label="languageStore.translate(action?.label)"
-                            :icon="action.icon"
-                            size="xs"
-                            @click="action.onClick(selectedRow[0])"
-                            outline
-                            round
-                        >
-                            <q-tooltip v-if="action?.tooltip">
-                                {{ languageStore.translate(action?.tooltip) }}
-                            </q-tooltip>
-                        </q-btn>
-                    </protected-component>
-                </div>
-
-                <q-select
-                    v-model="visibleColumns"
-                    multiple
-                    dense
-                    options-dense
-                    :display-value="languageStore.translate('Columns')"
-                    emit-value
-                    map-options
-                    outlined
-                    :options="options"
-                    option-value="name"
-                    class="!py-0"
-                >
-                    <template
-                        v-slot:option="{
-                            itemProps,
-                            opt,
-                            selected,
-                            toggleOption,
-                        }"
-                    >
-                        <q-item v-bind="itemProps">
-                            <q-item-section>
-                                <q-item-label>
-                                    {{ opt.label }}
-                                </q-item-label>
-                            </q-item-section>
-                            <q-item-section side>
-                                <q-toggle
-                                    :model-value="selected"
-                                    @update:model-value="toggleOption(opt)"
+                        <div class="flex items-center md:mt-0">
+                            <div>
+                                <q-btn
+                                    icon="view_column"
+                                    color="primary"
+                                    round
+                                    outline
+                                    size="xs"
+                                    class="ml-2"
+                                >
+                                    <q-menu>
+                                        <q-card>
+                                            <q-card-section>
+                                                <div class="column">
+                                                    <div
+                                                        class="text-h6 q-mb-md"
+                                                    >
+                                                        {{
+                                                            $translate(
+                                                                'Table columns',
+                                                            )
+                                                        }}
+                                                    </div>
+                                                    <q-toggle
+                                                        :model-value="
+                                                            visibleColumns.includes(
+                                                                col.name,
+                                                            )
+                                                        "
+                                                        v-for="col in options"
+                                                        :key="col.name"
+                                                        :label="col.label"
+                                                        @click="
+                                                            filterTableColumns(
+                                                                col.name,
+                                                            )
+                                                        "
+                                                    />
+                                                </div>
+                                            </q-card-section>
+                                        </q-card>
+                                    </q-menu>
+                                    <q-tooltip>
+                                        {{ $translate('Columns') }}
+                                    </q-tooltip>
+                                </q-btn>
+                            </div>
+                            <div>
+                                <q-btn
+                                    flat
+                                    round
+                                    dense
+                                    class="hidden md:!block mt-2"
+                                    :icon="
+                                        fullWidth
+                                            ? 'fullscreen_exit'
+                                            : 'fullscreen'
+                                    "
+                                    @click="fullWidth = !fullWidth"
                                 />
-                            </q-item-section>
-                        </q-item>
-                    </template>
-                </q-select>
-                <q-btn
-                    color="primary"
-                    icon="archive"
-                    class="mx-2"
-                    outline
-                    size="xs"
-                    round
-                    @click="exportTable"
-                >
-                    <q-tooltip>
-                        {{ languageStore.translate('Download') }} (CVS)
-                    </q-tooltip>
-                </q-btn>
-                <q-btn
-                    flat
-                    round
-                    dense
-                    :icon="fullWidth ? 'fullscreen_exit' : 'fullscreen'"
-                    @click="fullWidth = !fullWidth"
-                />
+                            </div>
+                        </div>
+                        <div class="q-gutter-sm">
+                            <protected-component
+                                v-if="selectedRow.length > 0"
+                                :permission-key="deletePermissionKey"
+                            >
+                                <q-btn
+                                    v-if="deleteAction"
+                                    round
+                                    color="red"
+                                    :disable="loading"
+                                    @click="onRecordDeleted"
+                                    size="xs"
+                                    outline
+                                    icon="delete"
+                                >
+                                    <q-tooltip>{{
+                                        languageStore.translate('Delete record')
+                                    }}</q-tooltip>
+                                </q-btn>
+                            </protected-component>
+                            <protected-component
+                                v-if="selectedRow.length > 0"
+                                :permission-key="editPermissionKey"
+                            >
+                                <q-btn
+                                    round
+                                    color="warning"
+                                    v-if="
+                                        selectedRow.length === 1 && editAction
+                                    "
+                                    @click="onRecordEdited"
+                                    size="xs"
+                                    icon="edit"
+                                    outline
+                                >
+                                    <q-tooltip>
+                                        {{
+                                            languageStore.translate(
+                                                'Edit record',
+                                            )
+                                        }}
+                                    </q-tooltip>
+                                </q-btn>
+                            </protected-component>
+                            <protected-component
+                                v-for="(action, index) in datatableActions"
+                                :key="index"
+                                :for-all="action?.forAll || false"
+                                :permission-key="action?.permission_key"
+                            >
+                                <q-btn
+                                    v-if="
+                                        action?.show_on_select
+                                            ? selectedRow.length > 0
+                                            : true
+                                    "
+                                    :color="action.color ?? 'primary'"
+                                    :label="
+                                        languageStore.translate(action?.label)
+                                    "
+                                    :icon="action.icon"
+                                    size="xs"
+                                    @click="action.onClick(selectedRow[0])"
+                                    outline
+                                    round
+                                >
+                                    <q-tooltip v-if="action?.tooltip">
+                                        {{
+                                            languageStore.translate(
+                                                action?.tooltip,
+                                            )
+                                        }}
+                                    </q-tooltip>
+                                </q-btn>
+                            </protected-component>
+                        </div>
+                    </div>
+                </div>
             </template>
+
+            <template v-slot:top-right></template>
 
             <template v-slot:no-data="{ message }">
                 <div class="text-center w-full py-8 text-red-600">
@@ -614,6 +663,15 @@ export default {
                 }, 5000)
             }
         })
+        const filterTableColumns = colName => {
+            if (visibleColumns.value.includes(colName)) {
+                visibleColumns.value = visibleColumns.value.filter(
+                    item => item !== colName,
+                )
+            } else {
+                visibleColumns.value.push(colName)
+            }
+        }
         return {
             tableRef,
             filter,
@@ -632,6 +690,7 @@ export default {
             router,
             languageStore,
             updatedRow,
+            filterTableColumns,
         }
     },
     data() {

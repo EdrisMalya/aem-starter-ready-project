@@ -10,9 +10,9 @@
                 <q-breadcrumbs-el :label="translate('Activity logs')" />
             </q-breadcrumbs>
         </div>
-        <div class="p-4">
+        <div>
             <user-management-layout active="activity-log">
-                <div class="px-2 py-4">
+                <div class="md:px-2 py-4">
                     <div class="flex items-center justify-between">
                         <p class="text-lg font-semibold">
                             {{ translate('Users activity log') }}

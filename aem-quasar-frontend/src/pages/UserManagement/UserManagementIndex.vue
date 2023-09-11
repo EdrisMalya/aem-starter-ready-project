@@ -6,10 +6,12 @@
                 <q-breadcrumbs-el label="User Management" />
             </q-breadcrumbs>
         </div>
-        <div class="p-4">
+        <div>
             <UserManagementLayout>
-                <div class="p-32 text-center">
-                    <p class="text-2xl">Welcome to user management section</p>
+                <div class="py-32 text-center">
+                    <p class="text-xl md:text-2xl">
+                        {{ $translate('Welcome to user management section') }}
+                    </p>
                 </div>
             </UserManagementLayout>
         </div>

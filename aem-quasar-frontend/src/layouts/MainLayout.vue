@@ -1,6 +1,6 @@
 <template>
     <q-layout
-        view="lHr lpR fFf"
+        view="lHh LpR fFf"
         :dir="languageStore.direction"
         :class="languageStore.direction === 'rtl' ? 'text-right' : 'text-left'"
     >
@@ -10,7 +10,7 @@
         </div>
         <span v-else>
             <q-header elevated>
-                <q-toolbar>
+                <q-toolbar class="flex items-center">
                     <q-btn
                         flat
                         dense
@@ -23,83 +23,70 @@
                     <q-toolbar-title>{{
                         languageStore.translate(generalStore.page_title)
                     }}</q-toolbar-title>
-                    <div class="flex items-center">
-                        <language-selector-component />
-                        <q-btn-dropdown
-                            split
-                            size="small"
-                            :label="`${languageStore.translate(
-                                'Welcome [full_name]',
-                                {
-                                    full_name:
-                                        authStore.user.first_name +
-                                        ' ' +
-                                        authStore.user.last_name,
-                                },
-                            )}`"
-                        >
-                            <q-list>
-                                <router-link to="/profile">
-                                    <q-item
-                                        clickable
-                                        v-close-popup
-                                        @click="onItemClick"
-                                    >
-                                        <q-item-section avatar>
-                                            <q-avatar
-                                                size="lg"
-                                                icon="person"
-                                                color="primary"
-                                                text-color="white"
-                                            />
-                                        </q-item-section>
-                                        <q-item-section>
-                                            <q-item-label>Profile</q-item-label>
-                                        </q-item-section>
-                                    </q-item>
-                                </router-link>
+                    <notification-component />
+                    <language-selector-component />
+                    <protected-component permission-key="backup-change-backup">
+                        <db-selector-component />
+                    </protected-component>
+                    <q-btn-dropdown dropdown-icon="person" size="sm" push>
+                        <q-list>
+                            <router-link to="/profile">
                                 <q-item
                                     clickable
                                     v-close-popup
-                                    @click="changePassword(true)"
+                                    @click="onItemClick"
                                 >
                                     <q-item-section avatar>
                                         <q-avatar
                                             size="lg"
-                                            icon="lock"
+                                            icon="person"
                                             color="primary"
                                             text-color="white"
                                         />
                                     </q-item-section>
                                     <q-item-section>
-                                        <q-item-label
-                                            >Change password</q-item-label
-                                        >
+                                        <q-item-label>Profile</q-item-label>
                                     </q-item-section>
                                 </q-item>
-                                <q-item clickable v-close-popup @click="logout">
-                                    <q-item-section avatar>
-                                        <q-avatar
-                                            size="lg"
-                                            icon="logout"
-                                            color="primary"
-                                            text-color="white"
-                                        />
-                                    </q-item-section>
-                                    <q-item-section>
-                                        <q-item-label>Logout</q-item-label>
-                                    </q-item-section>
-                                </q-item>
-                            </q-list>
-                        </q-btn-dropdown>
-                    </div>
+                            </router-link>
+                            <q-item
+                                clickable
+                                v-close-popup
+                                @click="changePassword(true)"
+                            >
+                                <q-item-section avatar>
+                                    <q-avatar
+                                        size="lg"
+                                        icon="lock"
+                                        color="primary"
+                                        text-color="white"
+                                    />
+                                </q-item-section>
+                                <q-item-section>
+                                    <q-item-label>Change password</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                            <q-item clickable v-close-popup @click="logout">
+                                <q-item-section avatar>
+                                    <q-avatar
+                                        size="lg"
+                                        icon="logout"
+                                        color="primary"
+                                        text-color="white"
+                                    />
+                                </q-item-section>
+                                <q-item-section>
+                                    <q-item-label>Logout</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                        </q-list>
+                    </q-btn-dropdown>
                 </q-toolbar>
             </q-header>
             <q-drawer
                 v-model="drawer"
                 show-if-above
                 :width="200"
-                :breakpoint="400"
                 :side="languageStore.direction === 'rtl' ? 'right' : 'left'"
             >
                 <q-scroll-area
@@ -167,10 +154,20 @@ import { useGeneralStore } from 'stores/generalStore'
 import SideBarLinks from 'components/SideBarLinks.vue'
 import LanguageSelectorComponent from 'components/LanguageSelectorComponent.vue'
 import { useLanguageStore } from 'stores/languageStore'
+import NotificationComponent from 'components/NotificationComponent.vue'
+import { useNotificationsStore } from 'stores/notificationStore'
+import DbSelectorComponent from 'components/dbSelectorComponent.vue'
+import ProtectedComponent from 'components/ProtectedComponent.vue'
 
 export default defineComponent({
     name: 'MainLayout',
-    components: { LanguageSelectorComponent, SideBarLinks },
+    components: {
+        ProtectedComponent,
+        DbSelectorComponent,
+        NotificationComponent,
+        LanguageSelectorComponent,
+        SideBarLinks,
+    },
     data() {
         return {
             isLoading: true,
@@ -183,6 +180,7 @@ export default defineComponent({
         const router = useRouter()
         const q = useQuasar()
         const languageStore = useLanguageStore()
+        const notificationsStore = useNotificationsStore()
         q.lang.rtl = false
         return {
             drawer,
@@ -194,6 +192,7 @@ export default defineComponent({
             authStore,
             generalStore,
             languageStore,
+            notificationsStore,
         }
     },
     async mounted() {
@@ -216,6 +215,14 @@ export default defineComponent({
                 ) {
                     this.logoutFunction(e.result.message)
                 }
+            })
+            .listen('NotificationPushedEvent', () => {
+                this.$q.notify({
+                    message: this.$translate('You have a new notification'),
+                    color: 'info',
+                    position: 'bottom-left',
+                })
+                this.notificationsStore.fetchNotifications()
             })
             .subscribe()
 

@@ -9,9 +9,9 @@
             <q-breadcrumbs-el :label="translate('Roles')" />
         </q-breadcrumbs>
     </div>
-    <div class="p-4">
+    <div>
         <UserManagementLayout active="roles">
-            <div class="px-3 py-6">
+            <div class="md:px-3 py-4">
                 <div class="flex items-center justify-between">
                     <p class="font-semibold text-lg">
                         {{ translate('Roles list') }}

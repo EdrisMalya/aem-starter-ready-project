@@ -1,5 +1,5 @@
 <template>
-    <q-btn :loading="languageStore.loading" icon="language" size="sm" flat>
+    <q-btn :loading="languageStore.loading" icon="language" size="sm" push>
         <q-menu transition-show="flip-right" transition-hide="flip-left">
             <q-list dense>
                 <q-item

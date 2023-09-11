@@ -10,15 +10,15 @@
                 <q-breadcrumbs-el :label="translate('Users')" />
             </q-breadcrumbs>
         </div>
-        <div class="p-4">
+        <div>
             <user-management-layout active="login-log">
-                <div class="px-2 py-4">
+                <div class="md:px-2 py-4">
                     <div class="flex items-center justify-between">
                         <p class="text-lg font-semibold">
                             {{ translate('Login log') }}
                         </p>
                     </div>
-                    <div class="mt-4">
+                    <div>
                         <datatable-component
                             :url="appRoutes.user_management.login_log.api"
                             :datatable-actions="[

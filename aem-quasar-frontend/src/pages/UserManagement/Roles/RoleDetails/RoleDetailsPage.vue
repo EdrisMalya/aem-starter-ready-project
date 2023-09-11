@@ -13,7 +13,7 @@
                 />
             </q-breadcrumbs>
         </div>
-        <div class="p-4">
+        <div>
             <user-management-layout active="roles">
                 <div class="py-4">
                     <p class="text-lg font-semibold">
@@ -24,7 +24,11 @@
                     </div>
                     <div v-else class="py-1">
                         <h3 class="font-semibold">
-                            All assigned permissions to this role
+                            {{
+                                $translate(
+                                    'All assigned permissions to this role',
+                                )
+                            }}
                         </h3>
                         <div class="px-4 pb-4 border-l">
                             <q-chip
